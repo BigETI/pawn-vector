@@ -1,0 +1,22 @@
+{
+    "user": "BigETI",
+    "repo": "pawn-vector",
+    "entry": "test/vectortest.pwn",
+    "output": "test/vectortest.amx",
+    "include_path": "include",
+    "dependencies": [
+        "sampctl/pawn-stdlib",
+        "BigETI/pawn-memory:2.0"
+    ],
+    "runtime": {
+        "mode": "main"
+    },
+    "builds": [
+        {
+            "name": "test",
+            "includes": [
+                "./include"
+            ]
+        }
+    ]
+}
