@@ -182,7 +182,7 @@ stock VECTOR_get_arr(Vector:vector, index, value[], value_len = sizeof value)
     new Pointer:value_ptr = VECTOR_get_ptr(vector, index);
     if (value_ptr != MEM_NULLPTR)
     {
-        MEM_get_arr(value_ptr, value, value_len);
+        MEM_get_arr(value_ptr, _, value, value_len);
     }
 }
 
@@ -200,7 +200,7 @@ stock VECTOR_set_arr(Vector:vector, index, const value[], value_len = sizeof val
 {
     if ((vector != VECTOR_NULL) && (index >= 0))
     {
-        VECTOR_set_ptr(vector, index, MEM_new_arr(index, value, value_len));
+        VECTOR_set_ptr(vector, index, MEM_new_arr(value, value_len));
     }
 }
 
@@ -344,9 +344,8 @@ stock VECTOR_find_str(Vector:vector, const value[], from_index = 0)
 }
 
 // Vector foreach compare
-stock bool:VECTOR_foreach_cmp(Vector:vector, &index, &Pointer:ptr)
+stock bool:VECTOR_foreach_cmp(Vector:vector, index, &Pointer:ptr)
 {
     ptr = VECTOR_get_ptr(vector, index);
-    ++index;
     return (ptr != MEM_NULLPTR);
 }

@@ -22,12 +22,12 @@ PrintVector(Vector:vector)
 {
     new value[128], value_size;
     printf("Vector 0x%x:", _:vector);
-    VECTOR_foreach(v : vector)
+    VECTOR_foreach_ex(v, index : vector)
     {
         value_size = MEM_get_size(v);
         MEM_UM_zero(UnmanagedPointer:MEM_UM_get_addr(value[0]), sizeof value);
         MEM_get_arr(v, _, value, (value_size < sizeof value) ? value_size : sizeof value);
-        printf("\t0x%x, %d, \"%s\"", _:v, value_size, value);
+        printf("\t%d: 0x%x, %d, \"%s\"", index, _:v, value_size, value);
     }
 }
 
@@ -36,17 +36,17 @@ PrintVectorsInVector(Vector:vector)
 {
     new value[128], value_size, Vector:v;
     printf("Vector 0x%x:", _:vector);
-    VECTOR_foreach(vx : vector)
+    VECTOR_foreach_ex(vx, index : vector)
     {
         value_size = MEM_get_size(vx);
         if (value_size == 1)
         {
-            v = Vector:MEM_get_val(vx, 0);
+            v = Vector:MEM_get_val(vx);
             if (v != VECTOR_NULL)
             {
                 if (MEM_get_size(Pointer:v) == VECTOR_struct)
                 {
-                    printf("\tVector 0x%x:", _:v);
+                    printf("\t%d: Vector 0x%x:", index, _:v);
                     VECTOR_foreach(vy : v)
                     {
                         value_size = MEM_get_size(vy);
@@ -59,14 +59,14 @@ PrintVectorsInVector(Vector:vector)
                 {
                     MEM_UM_zero(UnmanagedPointer:MEM_UM_get_addr(value[0]), sizeof value);
                     MEM_get_arr(vx, _, value, (value_size < sizeof value) ? value_size : sizeof value);
-                    printf("\t0x%x, %d, \"%s\"", _:vx, value_size, value);
+                    printf("\tcase 1 => %d: 0x%x, %d, \"%s\"", index, _:vx, value_size, value);
                 }
             }
             else
             {
                 MEM_UM_zero(UnmanagedPointer:MEM_UM_get_addr(value[0]), sizeof value);
                 MEM_get_arr(vx, _, value, (value_size < sizeof value) ? value_size : sizeof value);
-                printf("\t0x%x, %d, \"%s\"", _:vx, value_size, value);
+                printf("\tcase 2 => %d: 0x%x, %d, \"%s\"", index, _:vx, value_size, value);
             }
         }
         else
@@ -81,7 +81,7 @@ PrintVectorsInVector(Vector:vector)
 // Entry point
 main()
 {
-    new Vector:test_vector = VECTOR_NULL, Vector:test_vector_a = VECTOR_NULL, Vector:test_vector_b = VECTOR_NULL, sz, pos;
+    new Vector:test_vector = VECTOR_NULL, Vector:test_vector_a = VECTOR_NULL, Vector:test_vector_b = VECTOR_NULL, sz, pos, str[7];
     print("\r\n=====================");
     print("= Vector unit test  =");
     print("=    Made by BigETI =");
@@ -122,16 +122,22 @@ main()
     sz = VECTOR_size(test_vector);
     assertf(sz == 0, "Invalid size (%d, expected 0) : Test #6", sz);
     print("\r\n[VECTORTEST] Test 7");
-    VECTOR_push_back_str(test_vector_a, "ab");
-    VECTOR_push_back_str(test_vector_a, "cdef");
-    VECTOR_push_back_str(test_vector_a, "ghijkl");
-    VECTOR_push_back_str(test_vector_b, "mn");
-    VECTOR_push_back_str(test_vector_b, "opqs");
-    VECTOR_push_back_str(test_vector_b, "tuvwxy");
+    VECTOR_resize(test_vector_a, 3);
+    VECTOR_resize(test_vector_b, 3);
+    VECTOR_set_str(test_vector_a, 0, "ab");
+    VECTOR_set_str(test_vector_a, 1, "cdef");
+    VECTOR_set_str(test_vector_a, 2, "ghijkl");
+    VECTOR_set_str(test_vector_b, 0, "mn");
+    VECTOR_set_str(test_vector_b, 1, "opqs");
+    VECTOR_set_str(test_vector_b, 2, "tuvwxy");
     VECTOR_resize(test_vector, 2);
     VECTOR_set_val(test_vector, 0, _:test_vector_a);
-    VECTOR_set_val(test_vector, 0, _:test_vector_b);
+    VECTOR_set_val(test_vector, 1, _:test_vector_b);
     PrintVectorsInVector(test_vector);
+    VECTOR_get_arr(test_vector_a, 2, str);
+    assertf(strcmp("ghijkl", str) == 0, "Invalid string \"%s\" (expected \"ghijkl\") : Test #7", str);
+    VECTOR_get_arr(test_vector_b, 2, str);
+    assertf(strcmp("tuvwxy", str) == 0, "Invalid string \"%s\" (expected \"tuvwxy\") : Test #7", str);
     sz = VECTOR_size(test_vector);
     assertf(sz == 2, "Invalid size (%d, expected 2) : Test #7", sz);
     sz = VECTOR_size(test_vector_a);
