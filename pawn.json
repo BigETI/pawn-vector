@@ -6,7 +6,7 @@
     "include_path": "include",
     "dependencies": [
         "sampctl/pawn-stdlib",
-        "BigETI/pawn-memory:2.0"
+        "BigETI/pawn-memory:2.0.1"
     ],
     "runtime": {
         "mode": "main"
