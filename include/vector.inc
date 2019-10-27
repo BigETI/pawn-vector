@@ -136,10 +136,13 @@ stock VECTOR_push_back_val(&Vector:vector, value)
 // Vector push back array
 stock VECTOR_push_back_arr(&Vector:vector, const value[], value_len = sizeof value)
 {
-    new Pointer:value_ptr = MEM_new_arr(value, value_len);
-    if (value_ptr != MEM_NULLPTR)
+    if (value_len > 0)
     {
-        VECTOR_push_back_ptr(vector, value_ptr);
+        new Pointer:value_ptr = MEM_new_arr(value, value_len);
+        if (value_ptr != MEM_NULLPTR)
+        {
+            VECTOR_push_back_ptr(vector, value_ptr);
+        }
     }
 }
 
@@ -179,10 +182,28 @@ stock VECTOR_get_val(Vector:vector, index)
 // Vector get array
 stock VECTOR_get_arr(Vector:vector, index, value[], value_len = sizeof value)
 {
-    new Pointer:value_ptr = VECTOR_get_ptr(vector, index);
-    if (value_ptr != MEM_NULLPTR)
+    if (value_len > 0)
     {
-        MEM_get_arr(value_ptr, _, value, value_len);
+        new Pointer:value_ptr = VECTOR_get_ptr(vector, index);
+        if (value_ptr != MEM_NULLPTR)
+        {
+            MEM_get_arr(value_ptr, _, value, value_len);
+        }
+    }
+}
+
+// Vector get string
+stock VECTOR_get_str(Vector:vector, index, value[], value_len = sizeof value)
+{
+    if (value_len > 0)
+    {
+        new Pointer:value_ptr = VECTOR_get_ptr(vector, index);
+        if (value_ptr != MEM_NULLPTR)
+        {
+            new len = MEM_get_size(value_ptr);
+            MEM_get_arr(value_ptr, _, value, (len < value_len) ? len : value_len);
+            value[value_len - 1] = '\0';
+        }
     }
 }
 
@@ -198,7 +219,7 @@ stock VECTOR_set_val(Vector:vector, index, value)
 // Vector set array
 stock VECTOR_set_arr(Vector:vector, index, const value[], value_len = sizeof value)
 {
-    if ((vector != VECTOR_NULL) && (index >= 0))
+    if ((vector != VECTOR_NULL) && (index >= 0) && (value_len > 0))
     {
         VECTOR_set_ptr(vector, index, MEM_new_arr(value, value_len));
     }
@@ -297,7 +318,7 @@ stock VECTOR_remove_val(&Vector:vector, value)
 // Vector remove array
 stock VECTOR_remove_arr(&Vector:vector, const value[], value_len = sizeof value)
 {
-    if (vector != VECTOR_NULL)
+    if ((vector != VECTOR_NULL) && (value_len > 0))
     {
         new Pointer:ptr = MEM_new_arr(value, value_len);
         VECTOR_remove_ptr(vector, ptr);
@@ -315,7 +336,7 @@ stock VECTOR_remove_str(&Vector:vector, const value[])
 stock VECTOR_find_val(Vector:vector, value, from_index = 0)
 {
     new ret = INVALID_VECTOR_INDEX;
-    if (vector != VECTOR_NULL)
+    if ((vector != VECTOR_NULL) && (from_index >= 0))
     {
         new Pointer:ptr = MEM_new_val(value);
         ret = VECTOR_find_ptr(vector, ptr, from_index);
@@ -328,7 +349,7 @@ stock VECTOR_find_val(Vector:vector, value, from_index = 0)
 stock VECTOR_find_arr(Vector:vector, const value[], value_len = sizeof value, from_index = 0)
 {
     new ret = INVALID_VECTOR_INDEX;
-    if (vector != VECTOR_NULL)
+    if ((vector != VECTOR_NULL) && (value_len > 0) && (from_index >= 0))
     {
         new Pointer:ptr = MEM_new_arr(value, value_len);
         ret = VECTOR_find_ptr(vector, ptr, from_index);
