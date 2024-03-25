@@ -8,9 +8,10 @@
         "sampctl/pawn-stdlib",
         "BigETI/pawn-memory:2.0.1"
     ],
-    "runtime": {
-        "mode": "main"
-    },
+    "dev_dependencies": [
+        "sampctl/samp-stdlib",
+        "Zeex/samp-plugin-crashdetect:v4.21"
+    ],
     "builds": [
         {
             "name": "test",
